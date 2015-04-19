@@ -32,7 +32,7 @@ class documentos_procli extends fs_controller {
     public $documentos;
     public $proveedor;
     public $cliente;
-    public $id;
+    public $cod;
 
     public function __construct() {
         parent::__construct(__CLASS__, 'Documentos', 'compras', FALSE, FALSE);
@@ -42,17 +42,17 @@ class documentos_procli extends fs_controller {
         $this->share_extension();
         $this->documentos = array();
 
-        if (isset($_GET['folder']) AND (isset($_GET['codproveedor']) OR isset($_GET['codcliente'])) ) {
+        if (isset($_GET['folder']) AND isset($_GET['cod'])  ) {
             
             //Primero cargamos el proveedor o cliente segun sea
             if ($_GET['folder']=='proveedor'){
                 $proveedor = new proveedor();
-                $this->proveedor = $proveedor->get($_GET['codproveedor']);
-                $this->id = $_GET['codproveedor'];
+                $this->proveedor = $proveedor->get($_GET['cod']);
+                $this->cod = $_GET['cod'];
             }else{
                 $cliente = new cliente();
-                $this->cliente = $cliente->get($_GET['codcliente']);
-                $this->id = $_GET['codcliente'];
+                $this->cliente = $cliente->get($_GET['cod']);
+                $this->cod = $_GET['cod'];
             }
             //Luego si no existen documentos crea directorios
             if (!file_exists('tmp/' . FS_TMP_NAME . 'documentos_procli')) {
@@ -65,18 +65,18 @@ class documentos_procli extends fs_controller {
             //PAra subir archivos
             if (isset($_POST['upload'])) {
                 if (is_uploaded_file($_FILES['fdocumento']['tmp_name'])) {
-                    if (!file_exists('tmp/' . FS_TMP_NAME . 'documentos_procli/' . $_GET['folder'] . '/' . $this->id)) {
-                        mkdir('tmp/' . FS_TMP_NAME . 'documentos_procli/' . $_GET['folder'] . '/' . $this->id);
+                    if (!file_exists('tmp/' . FS_TMP_NAME . 'documentos_procli/' . $_GET['folder'] . '/' . $this->cod)) {
+                        mkdir('tmp/' . FS_TMP_NAME . 'documentos_procli/' . $_GET['folder'] . '/' . $this->cod);
                     }
 
-                    copy($_FILES['fdocumento']['tmp_name'], "tmp/" . FS_TMP_NAME . "documentos_procli/" . $_GET['folder'] . '/' . $this->id . '/' . $_FILES['fdocumento']['name']);
+                    copy($_FILES['fdocumento']['tmp_name'], "tmp/" . FS_TMP_NAME . "documentos_procli/" . $_GET['folder'] . '/' . $this->cod . '/' . $_FILES['fdocumento']['name']);
                     $this->new_message('Documentos añadido correctamente.');
                 }
             } 
             //Para eliminar archivos
             else if (isset($_GET['delete'])) {
-                if (file_exists('tmp/' . FS_TMP_NAME . 'documentos_procli/' . $_GET['folder'] . '/' . $this->id . '/' . $_GET['delete'])) {
-                    if (unlink('tmp/' . FS_TMP_NAME . 'documentos_procli/' . $_GET['folder'] . '/' . $this->id . '/' . $_GET['delete'])) {
+                if (file_exists('tmp/' . FS_TMP_NAME . 'documentos_procli/' . $_GET['folder'] . '/' . $this->cod . '/' . $_GET['delete'])) {
+                    if (unlink('tmp/' . FS_TMP_NAME . 'documentos_procli/' . $_GET['folder'] . '/' . $this->cod . '/' . $_GET['delete'])) {
                         $this->new_message('Archivo ' . $_GET['delete'] . ' eliminado correctamente.');
                     } else
                         $this->new_error_msg('Error al eliminar el archivo ' . $_GET['delete'] . '.');
@@ -94,7 +94,7 @@ class documentos_procli extends fs_controller {
                 'name' => 'documentos_cli',
                 'page_from' => __CLASS__,
                 'page_to' => 'ventas_cliente',
-                'type' => 'button',
+                'type' => 'tab',
                 'text' => '<span class="glyphicon glyphicon-file" title="Documentos"></span> &nbsp; Documentos',
                 'params' => '&folder=cliente'
             ),
@@ -102,7 +102,7 @@ class documentos_procli extends fs_controller {
                 'name' => 'documentos_prov',
                 'page_from' => __CLASS__,
                 'page_to' => 'compras_proveedor',
-                'type' => 'button',
+                'type' => 'tab',
                 'text' => '<span class="glyphicon glyphicon-file" title="Documentos"></span> &nbsp; Documentos',
                 'params' => '&folder=proveedor'
             ),
@@ -114,18 +114,15 @@ class documentos_procli extends fs_controller {
     }
 
     public function url() {
-        if (isset($_GET['folder']) AND isset($_GET['codproveedor'])) {
-            return 'index.php?page=' . __CLASS__ . '&folder=' . $_GET['folder'] . '&codproveedor=' . $_GET['codproveedor'];
-        }else if (isset($_GET['folder']) AND isset($_GET['codcliente'])){ 
-            return 'index.php?page=' . __CLASS__ . '&folder=' . $_GET['folder'] . '&codcliente=' . $_GET['codcliente'];        
-        }
-        else
+        if (isset($_GET['folder']) AND isset($_GET['cod'])) {
+            return 'index.php?page=' . __CLASS__ . '&folder=' . $_GET['folder'] . '&cod=' . $_GET['cod'];
+        } else
             return parent::url();
     }
 
     private function get_documentos() {
         $doclist = array();
-        $folder = 'tmp/' . FS_TMP_NAME . 'documentos_procli/' . $_GET['folder'] . '/' . $this->id;
+        $folder = 'tmp/' . FS_TMP_NAME . 'documentos_procli/' . $_GET['folder'] . '/' . $this->cod;
 
         if (file_exists($folder)) {
             foreach (scandir($folder) as $f) {
