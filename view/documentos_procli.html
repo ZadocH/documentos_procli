@@ -3,17 +3,19 @@
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
    <title>{$fsc->page->title} &lsaquo; {$fsc->empresa->nombre}</title>
-   <meta name="description" content="Facturacion es un software de facturación y contabilidad para pymes. Es software libre bajo licencia GNU/AGPL." />
+   <meta name="description" content="Facturacion es un software de facturaciÃ³n y contabilidad para pymes. Es software libre bajo licencia GNU/AGPL." />
    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
    <link rel="shortcut icon" href="view/img/favicon.ico" />
    <link rel="stylesheet" href="{$fsc->user->css}" />
    <link rel="stylesheet" href="view/css/datepicker.css" />
    <link rel="stylesheet" href="view/css/custom.css" />
-   <script type="text/javascript" src="view/js/jquery-2.1.1.min.js"></script>
+   <script type="text/javascript" src="view/js/jquery.min.js"></script>
    <script type="text/javascript" src="view/js/bootstrap.min.js"></script>
+   <script type="text/javascript" src="view/js/bootbox.min.js"></script>
    <script type="text/javascript" src="view/js/bootstrap-datepicker.js" charset="UTF-8"></script>
    <script type="text/javascript" src="view/js/jquery.autocomplete.min.js"></script>
    <script type="text/javascript" src="view/js/base.js"></script>
+
    <script type="text/javascript">
       function show_precio(precio)
       {
@@ -30,8 +32,8 @@
       function delete_documento(name)
       {
          bootbox.confirm({
-            message: '¿Realmente desea eliminar ' + name + '?',
-            title: '<b>Atención</b>',
+            message: 'Â¿Realmente desea eliminar ' + name + '?',
+            title: '<b>AtenciÃ³n</b>',
             callback: function(result) {
                if (result) {
                   window.location.href = "{$fsc->url()}&delete=" + name;
@@ -39,10 +41,14 @@
             }
          });
       }
+
    </script>
+
    {loop="$fsc->extensions"}
       {if condition="$value->type=='head'"}{$value->text}{/if}
    {/loop}
+
+
 </head>
 <body>
    {if="$fsc->get_errors()"}
@@ -81,11 +87,11 @@
                                 <a href="{$value['fullname']}" target="_blank" class="btn btn-bg btn-default">
                                     <span class="glyphicon glyphicon-file" aria-hidden="true"></span> &nbsp; {$value['name']}
                                 </a>
-                                <a href="#" class="btn btn-bg btn-default" title="Eliminar" onclick="delete_documento('{$value['name']}')">
+                                <a id="mylink" href="#" onclick="delete_documento('{$value['name']}');" class="btn btn-bg btn-default" title="Eliminar" >
                                     <span class="glyphicon glyphicon-trash"></span>
                                 </a>
                             </div>
-                            <p class="help-block">Tamaño: {$value['filesize']}. Fecha: {$value['date']}</p>
+                            <p class="help-block">TamaÃ±o: {$value['filesize']}. Fecha: {$value['date']}</p>
                         </div>
                         {/loop}
                     </div>
@@ -95,7 +101,7 @@
                                 <input type="hidden" name="upload" value="TRUE"/>
                                 <div class="panel panel-default">
                                     <div class="panel-heading">
-                                        <h3 class="panel-title">Añadir un documento</h3>
+                                        <h3 class="panel-title">AÃ±adir un documento</h3>
                                     </div>
                                     <div class="panel-body">
                                         <div class="form-group">
@@ -113,7 +119,7 @@
 
             </div>
             <div class="panel-footer text-left">
-                Primero botón -Examinar- , por último botón -Guardar-
+                Primero botÃ³n -Examinar- , por Ãºltimo botÃ³n -Guardar-
             </div>
 
         </div>   
